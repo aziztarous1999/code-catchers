@@ -3,7 +3,6 @@ const authentification = require('../auth/authentification');
 const adminGuard = require('../auth/role');
 let User = require('../../models/user.model');
 
-
 router.use(authentification);
 
 router.route('/').get(adminGuard,(req, res) => {
@@ -24,6 +23,15 @@ router.route('/add').post((req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
+
+
+
+router.route('/coursAccesible').get(async(req, res) => {
+
+  await User.findById(req.userData.userId).populate('availableCourses')
+    .then(user => res.status(200).json({"coursAccesible":user.availableCourses}))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
 
 
 router.route('/update/:id').post( async (req, res) => {
