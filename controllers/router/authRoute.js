@@ -12,6 +12,7 @@ router.route("/login").post(async (req, res) => {
         throw new Error("Email Incorrect!");
       }
       if (user.password === password) {
+        user.password = "";
         res
           .status(200)
           .json({
@@ -19,6 +20,7 @@ router.route("/login").post(async (req, res) => {
               { email, userId: user._id, role: user.role },
               process.env.SECRET_CODE
             ),
+            user
           });
       } else {
         throw new Error("Password Incorrect!");
