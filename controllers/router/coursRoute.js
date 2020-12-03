@@ -6,7 +6,7 @@ let User = require('../../models/user.model');
 let Cours = require('../../models/cours.model');
 let Review = require('../../models/review.model');
 
-router.use(authentification);
+
 
 router.route('/').get((req, res) => {
     Cours.find()
@@ -14,6 +14,13 @@ router.route('/').get((req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/:coursId').get((req, res) => {
+  Cours.findById(req.params.coursId)
+  .then(course => res.status(200).json(course))
+  .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.use(authentification);
 
 router.route('/add').post(upload.array('videos'),async (req, res) => {
   const owner = await User.findById(req.userData.userId);
