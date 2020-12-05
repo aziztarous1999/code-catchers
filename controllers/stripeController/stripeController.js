@@ -22,10 +22,16 @@ exports.getCheckoutSession  = async (req, res, next) => {
         success_url: 'http://localhost:3000/course',
         cancel_url: 'http://localhost:3000/course',
         customer_email: req.userData.email,
-        client_reference_id: req.params.coursId
+        client_reference_id: req.userData.userId
     });
 
     // 3) Create session as response
+    /*try{
+    const paymentIntent = await Stripe.paymentIntents.retrieve('pi_1HuzQuHKgsi1BtbNLqVctwus');
+    console.log(paymentIntent.status);}
+    catch(err){
+        console.log(err);
+    }*/
 
     res.status(200).json({
         status: 'success',
@@ -37,4 +43,40 @@ exports.getCheckoutSession  = async (req, res, next) => {
         });
     }
 
+}
+
+exports.getSubCheckoutSession = async (req, res, next) => {
+    
+    try {
+      const session = await Stripe.checkout.sessions.create({
+        mode: "payment",
+        payment_method_types: ["card"],
+        line_items: [
+          {
+            currency: 'usd',
+            name: req.body.title,
+            description: req.body.description,
+            images: ['https://miro.medium.com/max/3200/1*EuG_m_d3HIVC_LC6K8O1Kw.png'],
+            amount: (req.body.price * 1 ) * 100,
+            quantity: 1,
+          },
+        ],
+        
+        success_url: 'http://localhost:3000/Pricing',
+        cancel_url: 'http://localhost:3000/Pricing',
+        customer_email: req.userData.email,
+        client_reference_id: req.userData.userId
+      });
+  
+      res.send({
+        session
+      });
+    } catch (e) {
+      res.status(400);
+      return res.send({
+        error: {
+          message: e.message,
+        }
+      });
+    }
 }

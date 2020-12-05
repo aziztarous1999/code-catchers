@@ -3,15 +3,17 @@ const schedule = require('node-schedule');
 const moment = require('moment')
 const authentification = require('../auth/authentification');
 const adminGuard = require('../auth/role');
-
+const Stripe = require('stripe')('sk_test_51HsF85HKgsi1BtbNHt8xHu0avspshwn4F5vc12xx0oDMoEvpd06b4gxY69LBpQOChItDrZFJmEf6XCQZdnqFiOwS00Gl7d6pgV');
 let Abonnement = require("../../models/abonnement.model");
 let User = require("../../models/user.model");
 
 router.use(authentification);
-router.route("/create").post(async (req, res) => {
+router.route("/create/:paymentIntentId/:nbMonth").get(async (req, res) => {
+    const paymentIntent = await Stripe.paymentIntents.retrieve(req.params.paymentIntentId);
+    if(paymentIntent.status == 'succeeded'){
     try{
     const idUser = await User.findById(req.userData.userId);
-    const nbMonths = req.body.nbMonths;
+    const nbMonths = req.params.nbMonth;
 
     idUser.abonner = true;
     await idUser.save();
@@ -28,6 +30,10 @@ router.route("/create").post(async (req, res) => {
 
     }catch(err){
         res.status(400).json('Error: ' + err)
+    }
+    }
+    else {
+        res.status(401).json('paymentIntent.status: '+paymentIntent.status);
     }
 
 });
