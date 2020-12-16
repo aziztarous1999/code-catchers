@@ -51,7 +51,15 @@ const userSchema = new Schema({
     type: Number,
     default:0
   },
-  
+  phone: {
+    type: Number,
+    required:true,
+  },
+  gender: {
+    type: String,
+    required:true,
+  },
+
 }, {
   timestamps: true,
 });

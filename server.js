@@ -24,6 +24,7 @@ const authRouter = require('./controllers/router/authRoute');
 const abonnementRoute = require('./controllers/router/abonnementRoute');
 const paymentRoute = require('./controllers/router/paymentRouter');
 const stripeRoute = require('./controllers/router/stripeRoute');
+const reportRoute = require('./controllers/router/reportRoute');
 app.use(cors());
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb'}));
@@ -34,6 +35,7 @@ app.use('/cours',coursRouter);
 app.use('/abonnement',abonnementRoute);
 app.use('/payment',paymentRoute);
 app.use('/stripe',stripeRoute);
+app.use('/report',reportRoute);
 
 app.listen(port,()=>{
     console.log(`Server is running on port: ${port}`);

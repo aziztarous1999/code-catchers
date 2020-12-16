@@ -3,6 +3,22 @@ const authentification = require('../auth/authentification');
 const adminGuard = require('../auth/role');
 let User = require('../../models/user.model');
 
+
+
+router.route('/add').post((req, res) => {
+  const username = req.body.username;
+  const email = req.body.email;
+  const password = req.body.password;
+  const phone = req.body.phone;
+  const gender = req.body.gender;
+
+  const newUser = new User({username,email,password,phone,gender});
+
+  newUser.save()
+    .then(() => res.status(200).json('User added!'))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
+
 router.use(authentification);
 
 router.route('/').get(adminGuard,(req, res) => {
@@ -10,20 +26,6 @@ router.route('/').get(adminGuard,(req, res) => {
     .then(users => res.status(200).json(users))
     .catch(err => res.status(400).json('Error: ' + err));
 });
-
-router.route('/add').post((req, res) => {
-  const username = req.body.username;
-  const email = req.body.email;
-  const password = req.body.password;
-
-  const newUser = new User({username,email,password});
-
-  newUser.save()
-    .then(() => res.status(200).json('User added!'))
-    .catch(err => res.status(400).json('Error: ' + err));
-});
-
-
 
 
 router.route('/coursAccesible').get(async(req, res) => {

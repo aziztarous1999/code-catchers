@@ -16,11 +16,13 @@ router.route("/create/:paymentIntentId/:nbMonth").get(async (req, res) => {
     const nbMonths = req.params.nbMonth;
 
     idUser.abonner = true;
+    idUser.job = "Teacher";
     await idUser.save();
     const newAbonnement = new Abonnement({idUser,nbMonths});
 
     schedule.scheduleJob( moment().add(nbMonths, 'months').toDate(),async function(){
         idUser.abonner = false;
+        idUser.job = "Student";
         await idUser.save();
       });
 
@@ -45,7 +47,7 @@ router.route("/historic").get(async (req, res) => {
 
     await Abonnement.find({idUser
     },null,{ sort :{ createdAt : -1}})
-    .then((abonnements) => res.status(200).json({'abonnements:':abonnements}))
+    .then((abonnements) => res.status(200).json({'abonnements':abonnements}))
     .catch(err => res.status(400).json('Error: ' + err));
 
 });

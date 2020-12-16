@@ -47,8 +47,10 @@ router.route("/payments").get(async (req, res) => {
     const from = await User.findById(req.userData.userId);
 
     await Payment.find({from
-    },null,{ sort :{ createdAt : -1}})
-    .then((payments) => res.status(200).json({'payments:':payments}))
+    },null,{ sort :{ createdAt : -1}}).populate('idCours').populate('from').populate('to')
+    .then((payments) => {
+        
+        res.status(200).json({'payments':payments})})
 }catch(err){
     res.status(400).json('Error: ' + err);
 }
